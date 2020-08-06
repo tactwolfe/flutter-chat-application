@@ -10,7 +10,9 @@ class AuthForm extends StatefulWidget {
     BuildContext ctx,
     ) submitFn; //another way of declaring a function that will have some argument and return type
 
-  AuthForm(this.submitFn);
+    final bool _isLoading;
+
+  AuthForm(this.submitFn,this._isLoading);
 
   @override
   _AuthFormState createState() => _AuthFormState();
@@ -123,7 +125,11 @@ class _AuthFormState extends State<AuthForm> {
 
                   SizedBox(height: 12,),
 
+                  //this means if authentication show a circular indicator instead of a button
+                  if(widget._isLoading) CircularProgressIndicator(),
+
                   //login and signup button
+                  if(!widget._isLoading)
                   RaisedButton(
                     child: Text(_isLogin ? "Login" : "SignUp" ),
                     onPressed: (){
@@ -132,6 +138,7 @@ class _AuthFormState extends State<AuthForm> {
                   ),
 
                   //auth switch button
+                   if(!widget._isLoading)
                   FlatButton(
                     textColor: Theme.of(context).primaryColor,
                     child: Text(_isLogin ? "Create New Account" : "I Already Have an Account" ),

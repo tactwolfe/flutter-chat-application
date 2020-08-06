@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../widget/auth_form.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class AuthScreen extends StatefulWidget {
@@ -14,7 +15,10 @@ class _AuthScreenState extends State<AuthScreen> {
 
   final _auth = FirebaseAuth.instance; //this will give us instance of firebaseauth object which will be used to login and signup user
 
-  void _submitAuthForm( 
+  var _isLoading = false;
+  
+  
+  void _submitAuthForm( //function that calls login and signup method
     String email,
     String password,
     String username,
@@ -24,7 +28,12 @@ class _AuthScreenState extends State<AuthScreen> {
 
       AuthResult authResult;
 
-  try{    //login method
+  try{ //login method
+
+      setState(() {
+        _isLoading = true;
+      });
+
       if(isLogin){ 
        authResult= await _auth.signInWithEmailAndPassword(
          email: email, 
@@ -38,7 +47,21 @@ class _AuthScreenState extends State<AuthScreen> {
           email: email, 
           password: password
         );
+
+        //this method is used to store extra user data inside a collection with a document having id same as user id & the info stored is username and email 
+        await Firestore.instance.collection('users')
+        .document(authResult.user.uid)
+        .setData({
+          'username':username,
+          'email':email,
+        });
       }
+
+      
+
+
+
+
     }on PlatformException catch (err){ //platformexception error are authentication error
       var message = "An Error occurred ,please check ypur credentials";
 
@@ -52,9 +75,16 @@ class _AuthScreenState extends State<AuthScreen> {
           content: Text(message),
           backgroundColor: Colors.black,
           ));
+
+          setState(() {
+            _isLoading = false;
+          });
     }
     catch(err){
       print(err);
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -63,7 +93,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
-      body:AuthForm(_submitAuthForm),
+      body:AuthForm(_submitAuthForm ,_isLoading),
       
     );
   }
