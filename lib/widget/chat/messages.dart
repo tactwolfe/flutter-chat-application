@@ -29,6 +29,7 @@ class Messages extends StatelessWidget {
             itemBuilder: (ctx , i)=> MessageBubble(
               chatDocs[i]['text'],
               chatDocs[i]['username'],
+              chatDocs[i]['userImage'],
               chatDocs[i]['userId'] == futureSnapshot.data.uid,
               key : ValueKey(chatDocs[i].documentID), //here document id is a unique identifier associated with each document using this key avoid unneccessary rebuilding of our widget tree inside streambuilder
               

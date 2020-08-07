@@ -28,7 +28,8 @@ class _NewMessageState extends State<NewMessage> {
       'text':_enteredMessage,
       'createdAt':Timestamp.now(), //this field will help us to fetch and display the messages in order of their time stamp
       'userId': user.uid,
-      'username':userData['username']
+      'username':userData['username'],
+      'userImage' : userData['image_url']
     });
     _controller.clear(); //to clear the textfield after chat is pushed
   }

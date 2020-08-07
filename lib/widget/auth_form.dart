@@ -1,11 +1,19 @@
+//auth form widget
+
+
 import 'package:flutter/material.dart';
+import 'dart:io';
+import '../widget/picker/user_image_picker.dart';
 
 class AuthForm extends StatefulWidget {
+
+
 
   final void Function(
     String email , 
     String password , 
     String username ,
+    File image,
     bool isLogin,
     BuildContext ctx,
     ) submitFn; //another way of declaring a function that will have some argument and return type
@@ -32,17 +40,34 @@ class _AuthFormState extends State<AuthForm> {
 
   var _isLogin = true;
 
+  File _userImageFile;
+
+
+  void _pickedImage(File image) {
+    _userImageFile = image;
+  }
+
 //method that is used to save the inputted form value and authenticate them
   void _trySubmit(){
     final isValid =_formKey.currentState.validate(); //to validate the inputs in form when the submit button is pressed
     FocusScope.of(context).unfocus(); //to close the softkeyboard as soon as we submit the form
 
+    if(_userImageFile == null && !_isLogin){
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Please pick an image"),
+          backgroundColor: Colors.black,
+          ));
+      return ;
+    }
+
     if(isValid){
       _formKey.currentState.save();
-      widget.submitFn(
+      widget.submitFn( //function that load the submit data into database
         _userEmail.trim(), //this trim constructor will remove any extra white spaces from front and back of our inputted info , we did this because without this some error will be thrown by firebase while authenticating and thus it will leads to a bad user experience
         _userPassword.trim(),
         _userName.trim(),
+        _userImageFile,
         _isLogin,
         context
       );
@@ -67,6 +92,10 @@ class _AuthFormState extends State<AuthForm> {
               child: Column(
                 mainAxisSize: MainAxisSize.min, //to make sure the column only take min height it needed not all the available height
                 children: <Widget>[
+                  
+                  //user image picker
+                  if(!_isLogin)
+                  UserImagePicker(_pickedImage),
 
                   //for email
                   TextFormField(
