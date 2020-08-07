@@ -99,6 +99,9 @@ class _AuthFormState extends State<AuthForm> {
 
                   //for email
                   TextFormField(
+                    autocorrect: false, // no autocorrection on email field
+                    textCapitalization: TextCapitalization.none, //not going to apitalize anything
+                    enableSuggestions: false, //no suggestion
                     key: ValueKey("email"),
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
@@ -118,6 +121,9 @@ class _AuthFormState extends State<AuthForm> {
                   if(!_isLogin)
                   //for username
                   TextFormField(
+                    autocorrect: true,
+                    textCapitalization: TextCapitalization.words,
+                    enableSuggestions: false,
                     key: ValueKey("username"),
                     decoration: InputDecoration(
                       labelText: "UserName"
